@@ -28,6 +28,7 @@ export function createHash(buffer: Buffer) {
 export function create(
 	manifestBuffer: Buffer,
 	certificates: Schemas.CertificatesSchema,
+	signingTime: Date = new Date(),
 ): Buffer {
 	const signature = forge.pkcs7.createSignedData();
 
@@ -72,7 +73,7 @@ export function create(
 	 * Detached signature is a property of PKCS#7 cryptography standard.
 	 */
 
-	signature.sign({ detached: true });
+	signature.sign({ detached: true, signingTime });
 
 	/**
 	 * Signature here is an ASN.1 valid structure (DER-compliant).
