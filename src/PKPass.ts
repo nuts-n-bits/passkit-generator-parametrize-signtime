@@ -31,6 +31,7 @@ const RegExps = {
 } as const;
 
 export default class PKPass extends Bundle {
+	public signingTime: undefined | Date = undefined
 	private [certificatesSymbol]: Schemas.CertificatesSchema;
 	private [propsSymbol]: Schemas.PassProps = {};
 	private [localizationSymbol]: {
@@ -653,6 +654,7 @@ export default class PKPass extends Bundle {
 		const signatureBuffer = Signature.create(
 			manifestBuffer,
 			this[certificatesSymbol],
+			this.signingTime,
 		);
 		super.addBuffer("signature", signatureBuffer);
 	}
