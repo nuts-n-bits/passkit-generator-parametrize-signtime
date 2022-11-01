@@ -73,7 +73,7 @@ export function create(
 	 * Detached signature is a property of PKCS#7 cryptography standard.
 	 */
 
-	signature.sign({ detached: true, signingTime });
+	signature.sign({ detached: true, date: signingTime });
 
 	/**
 	 * Signature here is an ASN.1 valid structure (DER-compliant).
