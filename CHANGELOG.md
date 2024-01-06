@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.1.11 - 15 Aug 2023
+
+    Fixed beacons `major` validation to be more relaxed (PR #158);
+
+## 3.1.10 - 09 Aug 2023
+
+    Fixed dates processing by converting them to UTC (PR #155);
+
+## 3.1.9 - 03 Apr 2023
+
+    Fixed transitType which wasn't being imported when a boardingPass was getting read (PR #138)
+    Improved types for property in Field type (PR #139)
+
+## 3.1.8 - 26 Mar 2023
+
+    Fixed Typescript type for Semantics.WifiAccess (PR #136)
+
 ## 3.1.7 - 14 Nov 2022
 
     Fixed generation of EventTicket with row fields (PR #118)

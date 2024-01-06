@@ -58,6 +58,12 @@ Look at the [Migration Guide](https://github.com/alexandercerutti/passkit-genera
 
 ---
 
+### Integrating Apple Wallet Web services?
+
+Give a look at another library I made: [Passkit Webservice Toolkit](https://github.com/alexandercerutti/passkit-webservice-toolkit) and its integrations!
+
+---
+
 ## Getting Started
 
 ##### Model
@@ -122,15 +128,23 @@ This is a standard procedure: you would have to do it also without using this li
 
 ## Usage Examples
 
-#### Folder Model
+Importing:
 
 ```typescript
-/**
- * Use `const { PKPass } = require("passkit-generator");`
- * for usage in CommonJS (Node.js)
- */
+/** CommonJS **/
+const { PKPass } = require("passkit-generator");
+
+/** Typescript **/
 import { PKPass } from "passkit-generator";
 
+/** ESM **/
+import passkit from "passkit-generator";
+const PKPass = passkit.PKPass;
+```
+
+### Folder Model
+
+```typescript
 try {
 	/** Each, but last, can be either a string or a Buffer. See API Documentation for more */
 	const { wwdr, signerCert, signerKey, signerKeyPassphrase } = getCertificatesContentsSomehow();
@@ -169,15 +183,9 @@ try {
 }
 ```
 
-#### Buffer Model
+### Buffer Model
 
 ```typescript
-/**
- * Use `const { PKPass } = require("passkit-generator");`
- * for usage in CommonJS (Node.js)
- */
-import { PKPass } from "passkit-generator";
-
 try {
 	/** Each, but last, can be either a string or a Buffer. See API Documentation for more */
 	const { wwdr, signerCert, signerKey, signerKeyPassphrase } = getCertificatesContentsSomehow();

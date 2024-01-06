@@ -11,7 +11,7 @@
 		"preinstall": "npm run clear:deps",
 		"postinstall": "npm run service:link-pg && npm link passkit-generator",
 		"clear:deps": "rm -rf node_modules",
-		"example": "echo \"test\"; `#specifying host due to WSL limits`"
+		"example": "npx serverless@3 offline --host 0.0.0.0; :'specifying host due to WSL limits'"
 	},
 	"dependencies": {
 		"aws-sdk": "^2.1092.0",
@@ -19,7 +19,6 @@
 	},
 	"devDependencies": {
 		"@types/aws-lambda": "^8.10.93",
-		"@types/express": "4.17.13",
 		"serverless-offline": "^8.5.0",
 		"serverless-plugin-typescript": "^2.1.1",
 		"serverless-s3-local": "^0.6.22",

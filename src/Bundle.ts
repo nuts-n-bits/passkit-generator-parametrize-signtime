@@ -21,7 +21,7 @@ export default class Bundle {
 	private [filesSymbol]: { [key: string]: Buffer } = {};
 	private [mimeTypeSymbol]: string;
 
-	constructor(mimeType: `${Mime.type}/${Mime.subtype}`) {
+	public constructor(mimeType: `${Mime.type}/${Mime.subtype}`) {
 		if (!mimeType) {
 			throw new Error(Messages.BUNDLE.MIME_TYPE_MISSING);
 		}
@@ -50,7 +50,7 @@ export default class Bundle {
 	 * @returns
 	 */
 
-	static freezable(
+	public static freezable(
 		mimeType: `${Mime.type}/${Mime.subtype}`,
 	): [Bundle, Function] {
 		const bundle = new Bundle(mimeType);
@@ -70,7 +70,7 @@ export default class Bundle {
 	 * can be added any further.
 	 */
 
-	protected [freezeSymbol]() {
+	private [freezeSymbol]() {
 		if (this.isFrozen) {
 			return;
 		}
@@ -85,6 +85,21 @@ export default class Bundle {
 
 	public get isFrozen() {
 		return Object.isFrozen(this[filesSymbol]);
+	}
+
+	/**
+	 * Returns a copy of the current list of buffers
+	 * that have been added to the class.
+	 *
+	 * It does not include translation files, manifest
+	 * and signature.
+	 *
+	 * Final files list might differ due to export
+	 * conditions.
+	 */
+
+	public get files() {
+		return Object.keys(this[filesSymbol]);
 	}
 
 	/**

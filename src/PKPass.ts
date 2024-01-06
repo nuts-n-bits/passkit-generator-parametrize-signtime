@@ -10,14 +10,13 @@ import * as Strings from "./StringsUtils";
 import * as Utils from "./utils";
 import * as Messages from "./messages";
 
-/** Exporting for tests specs */
-export const propsSymbol = Symbol("props");
-export const localizationSymbol = Symbol("pass.l10n");
-export const importMetadataSymbol = Symbol("import.pass.metadata");
-export const createManifestSymbol = Symbol("pass.manifest");
-export const closePassSymbol = Symbol("pass.close");
-export const passTypeSymbol = Symbol("pass.type");
-export const certificatesSymbol = Symbol("pass.certificates");
+const propsSymbol = Symbol("props");
+const localizationSymbol = Symbol("pass.l10n");
+const importMetadataSymbol = Symbol("import.pass.metadata");
+const createManifestSymbol = Symbol("pass.manifest");
+const closePassSymbol = Symbol("pass.close");
+const passTypeSymbol = Symbol("pass.type");
+const certificatesSymbol = Symbol("pass.certificates");
 
 const RegExps = {
 	PASS_JSON: /pass\.json/,
@@ -49,7 +48,7 @@ export default class PKPass extends Bundle {
 	 * @returns
 	 */
 
-	static async from<S extends PKPass | Schemas.Template>(
+	public static async from<S extends PKPass | Schemas.Template>(
 		source: S,
 		props?: Schemas.OverridablePassProps,
 	): Promise<PKPass> {
@@ -113,7 +112,7 @@ export default class PKPass extends Bundle {
 	 * @param passes
 	 */
 
-	static pack(...passes: PKPass[]): Bundle {
+	public static pack(...passes: PKPass[]): Bundle {
 		const [bundle, freezeBundle] = Bundle.freezable(
 			"application/vnd.apple.pkpasses",
 		);
@@ -137,7 +136,7 @@ export default class PKPass extends Bundle {
 	// *** INSTANCE *** //
 	// **************** //
 
-	constructor(
+	public constructor(
 		buffers?: Schemas.FileBuffers,
 		certificates?: Schemas.CertificatesSchema,
 		props?: Schemas.OverridablePassProps,
@@ -222,9 +221,7 @@ export default class PKPass extends Bundle {
 	 * Allows setting a transitType property
 	 * for a boardingPass.
 	 *
-	 * It will (automatically) throw an exception
-	 * if current type is not "boardingPass".
-	 *
+	 * @throws if current type is not "boardingPass".
 	 * @param value
 	 */
 
@@ -248,8 +245,7 @@ export default class PKPass extends Bundle {
 	 * Allows getting the current transitType
 	 * from pass props.
 	 *
-	 * It will (automatically) throw an exception
-	 * if current type is not "boardingPass".
+	 * @throws (automatically) if current type is not "boardingPass".
 	 */
 
 	public get transitType() {
@@ -259,9 +255,9 @@ export default class PKPass extends Bundle {
 	/**
 	 * Allows accessing to primaryFields object.
 	 *
-	 * It will (automatically) throw an exception
-	 * if no valid pass.json has been parsed yet
-	 * or, anyway, if it has not a valid type.
+	 * @throws (automatically) if no valid pass.json
+	 * 		has been parsed yet or, anyway, if current
+	 * 		instance has not a valid type set yet.
 	 */
 
 	public get primaryFields(): Schemas.Field[] {
@@ -271,10 +267,9 @@ export default class PKPass extends Bundle {
 	/**
 	 * Allows accessing to secondaryFields object
 	 *
-	 * It will (automatically) throw an exception
-	 * if no valid pass.json has been parsed yet
-	 * or, anyway, if a valid type has not been
-	 * set yet.
+	 * @throws (automatically) if no valid pass.json
+	 * 		has been parsed yet or, anyway, if current
+	 * 		instance has not a valid type set yet.
 	 */
 
 	public get secondaryFields(): Schemas.Field[] {
@@ -284,15 +279,14 @@ export default class PKPass extends Bundle {
 	/**
 	 * Allows accessing to auxiliaryFields object
 	 *
-	 * It will (automatically) throw an exception
-	 * if no valid pass.json has been parsed yet
-	 * or, anyway, if a valid type has not been
-	 * set yet.
-	 *
 	 * For Typescript users: this signature allows
 	 * in any case to add the 'row' field, but on
 	 * runtime they are only allowed on "eventTicket"
 	 * passes.
+	 *
+	 * @throws (automatically) if no valid pass.json
+	 * 		has been parsed yet or, anyway, if current
+	 * 		instance has not a valid type set yet.
 	 */
 
 	public get auxiliaryFields(): Schemas.FieldWithRow[] {
@@ -302,10 +296,9 @@ export default class PKPass extends Bundle {
 	/**
 	 * Allows accessing to headerFields object
 	 *
-	 * It will (automatically) throw an exception
-	 * if no valid pass.json has been parsed yet
-	 * or, anyway, if a valid type has not been
-	 * set yet.
+	 * @throws (automatically) if no valid pass.json
+	 * 		has been parsed yet or, anyway, if current
+	 * 		instance has not a valid type set yet.
 	 */
 
 	public get headerFields(): Schemas.Field[] {
@@ -315,10 +308,9 @@ export default class PKPass extends Bundle {
 	/**
 	 * Allows accessing to backFields object
 	 *
-	 * It will (automatically) throw an exception
-	 * if no valid pass.json has been parsed yet
-	 * or, anyway, if a valid type has not been
-	 * set yet.
+	 * @throws (automatically) if no valid pass.json
+	 * 		has been parsed yet or, anyway, if current
+	 * 		instance has not a valid type set yet.
 	 */
 
 	public get backFields(): Schemas.Field[] {
@@ -329,9 +321,9 @@ export default class PKPass extends Bundle {
 	 * Allows setting a pass type.
 	 *
 	 * **Warning**: setting a type with this setter,
-	 * will reset all the imported or manually
-	 * setted fields (primaryFields, secondaryFields,
-	 * headerFields, auxiliaryFields, backFields)
+	 * will reset all the fields (primaryFields,
+	 * secondaryFields, headerFields, auxiliaryFields, backFields),
+	 * both imported or manually set.
 	 */
 
 	public set type(nextType: Schemas.PassTypesProps | undefined) {
@@ -398,27 +390,28 @@ export default class PKPass extends Bundle {
 	// **************************** //
 
 	/**
-	 * Allows adding a new asset inside the pass / bundle;
-	 * If an empty buffer is passed, it won't be added to
-	 * the bundle.
+	 * Allows adding a new asset inside the pass / bundle with
+	 * the following exceptions:
 	 *
-	 * `manifest.json` and `signature` files will be ignored.
-	 *
-	 * If a `pass.json` is passed to this method (and it has
-	 * not been added previously), it will be read, validated
-	 * and merged in the current instance. Its properties
-	 * will overwrite the ones setted through methods.
-	 *
-	 * If a `pass.strings` file is passed, it will be read, parsed
-	 * and merged with the translations added previously.
-	 * Comments will be ignored.
+	 * - Empty buffers are ignored;
+	 * - `manifest.json` and `signature` files will be ignored;
+	 * - `pass.json` will be read validated and merged in the
+	 * 	current instance, if it wasn't added previously.
+	 * 	It's properties will overwrite the instance ones.
+	 * 	You might loose data;
+	 * - `pass.strings` files will be read, parsed and merged
+	 * 	with the current translations. Comments will be ignored;
+	 * - `personalization.json` will be read, validated and added.
+	 * 	They will be stripped out when exporting the pass if
+	 * 	it won't have NFC details or if any of the personalization
+	 * 	files is missing;
 	 *
 	 * @param pathName
 	 * @param buffer
 	 */
 
 	public addBuffer(pathName: string, buffer: Buffer): void {
-		if (!buffer) {
+		if (!buffer?.length) {
 			return;
 		}
 
@@ -510,11 +503,6 @@ export default class PKPass extends Bundle {
 	 * Given data from a pass.json, reads them to bring them
 	 * into the current pass instance.
 	 *
-	 * **Warning**: if this file contains a type (boardingPass,
-	 * coupon, and so on), it will replace the current one,
-	 * causing, therefore, the destroy of the fields added
-	 * previously.
-	 *
 	 * @param data
 	 */
 
@@ -557,6 +545,7 @@ export default class PKPass extends Bundle {
 				secondaryFields = [],
 				auxiliaryFields = [],
 				backFields = [],
+				transitType,
 			} = data[type] || {};
 
 			this.headerFields.push(...headerFields);
@@ -564,6 +553,10 @@ export default class PKPass extends Bundle {
 			this.secondaryFields.push(...secondaryFields);
 			this.auxiliaryFields.push(...auxiliaryFields);
 			this.backFields.push(...backFields);
+
+			if (this.type === "boardingPass") {
+				this.transitType = transitType;
+			}
 		}
 	}
 
@@ -593,9 +586,7 @@ export default class PKPass extends Bundle {
 	 * signature files
 	 */
 
-	private [closePassSymbol](
-		__test_disable_manifest_signature_generation__: boolean = false,
-	) {
+	private [closePassSymbol]() {
 		if (!this.type) {
 			throw new TypeError(Messages.CLOSE.MISSING_TYPE);
 		}
@@ -668,10 +659,6 @@ export default class PKPass extends Bundle {
 		// ****************************** //
 		// *** SIGNATURE AND MANIFEST *** //
 		// ****************************** //
-
-		if (__test_disable_manifest_signature_generation__) {
-			return;
-		}
 
 		const manifestBuffer = this[createManifestSymbol]();
 		super.addBuffer("manifest.json", manifestBuffer);
@@ -753,7 +740,7 @@ export default class PKPass extends Bundle {
 	 * If the language already exists, translations will be
 	 * merged with the existing ones.
 	 *
-	 * Setting `translations` to `null`, fully deletes a language,
+	 * Setting `translations` to `null` fully deletes a language,
 	 * its translations and its files.
 	 *
 	 * @see https://developer.apple.com/documentation/walletpasses/creating_the_source_for_a_pass#3736718
@@ -807,7 +794,10 @@ export default class PKPass extends Bundle {
 	/**
 	 * Allows to specify an expiration date for the pass.
 	 *
+	 * Pass `null` to remove the expiration date.
+	 *
 	 * @param date
+	 * @throws if pass is frozen due to previous export
 	 * @returns
 	 */
 
@@ -844,6 +834,7 @@ export default class PKPass extends Bundle {
 	 *
 	 * @see https://developer.apple.com/documentation/walletpasses/pass/beacons
 	 * @param beacons
+	 * @throws if pass is frozen due to previous export
 	 * @returns
 	 */
 
@@ -880,6 +871,7 @@ export default class PKPass extends Bundle {
 	 *
 	 * @see https://developer.apple.com/documentation/walletpasses/pass/locations
 	 * @param locations
+	 * @throws if pass is frozen due to previous export
 	 * @returns
 	 */
 
@@ -903,10 +895,13 @@ export default class PKPass extends Bundle {
 	 * Allows setting a relevant date in which the OS
 	 * should show this pass.
 	 *
-	 * @param date
+	 * Pass `null` to remove relevant date from this pass.
+	 *
+	 * @param {Date | null} date
+	 * @throws if pass is frozen due to previous export
 	 */
 
-	public setRelevantDate(date: Date): void {
+	public setRelevantDate(date: Date | null): void {
 		Utils.assertUnfrozen(this);
 
 		if (date === null) {
@@ -929,8 +924,15 @@ export default class PKPass extends Bundle {
 	 * will be shown to the user, without any possibility
 	 * to change it.
 	 *
+	 * It accepts either a string from which all formats will
+	 * be generated or a specific set of barcodes objects
+	 * to be validated and used.
+	 *
+	 * Pass `null` to remove all the barcodes.
+	 *
 	 * @see https://developer.apple.com/documentation/walletpasses/pass/barcodes
 	 * @param barcodes
+	 * @throws if pass is frozen due to previous export
 	 * @returns
 	 */
 
@@ -988,6 +990,7 @@ export default class PKPass extends Bundle {
 	 *
 	 * @see https://developer.apple.com/documentation/walletpasses/pass/nfc
 	 * @param data
+	 * @throws if pass is frozen due to previous export
 	 * @returns
 	 */
 
